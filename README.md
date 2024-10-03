@@ -65,32 +65,48 @@ You can define a rule by specifying its conditions and actions. Here's a basic e
 ```
 import { RuleEngine } from './RuleEngine';
 
-// Define your rules
-const rules = [
-  {
-    id: 'rule-1',
-    description: 'Give 10% discount if customer is premium',
-    condition: (context) => context.customerType === 'premium',
-    action: (context) => {
-      context.discount = 0.1;
-    },
-    priority: 1,
-  },
-];
+// Action to apply discount
+const applyDiscountAction: Action<LoyaltyContext> = (context) => {
+  const newItems = context.orderData.items.map(item => ({
+    ...item, // Create a new item object
+    discount: 10  // Apply a 10% discount
+  }));
 
-// Initialize the rule engine
-const engine = new RuleEngine(rules);
+  return {
+    ...context, // Create a new context
+    orderData: {
+      ...context.orderData,
+      items: newItems
+    }
+  };
+};
+
+// define rules
+export const includeSkuRule = (includeSkuList: string[]): StatelessRule<LoyaltyContext> => (context) =>
+  context.orderData.items.some(item => includeSkuList.includes(item.itemCode));
+
+const engine = new RuleEngine<LoyaltyContext>([
+  { rule: includeSkuRule(['sku1']), action: applyDiscountAction },
+]);
 
 // Define the context
 const context = {
-  customerType: 'premium',
-  discount: 0,
-};
+  customerId: 'customer1',
+  eventName: 'Loyalty Program',
+  eventType: 'Discount',
+  orderData: {
+    items: [
+      { itemCode: 'sku1', quantity: 2, discount: 0, price: 50 },  // Total: $100
+      { itemCode: 'sku4', quantity: 1, discount: 0, price: 30 }   // Not included in SKUs
+    ],
+    transactionDate: new Date(),
+    paymentMethod: 'credit-card'
+  }
+}
 
-// Execute the engine
-engine.run(context);
+const updatedContext = await engine.run(loyaltyContext);
 
-console.log(context.discount); // 0.1 (10% discount applied)
+console.log(updatedContext.orderData.items[0].discount); // 0.1 (10% discount applied)
 
 ```
 
@@ -110,29 +126,29 @@ Here are the key milestones and features planned for this project:
 
 -[x]   Setup TypeScript environment.
 -[x]   Basic rule definition structure with conditions and actions.
--[ ]   Execute rules based on conditions.
--[ ]   Unit tests for core functionality.
+*   Execute rules based on conditions.
+*   Unit tests for core functionality.
 
 ### Milestone 2: Priority and Multiple Rule Evaluation
 
--[ ]   Support for multiple rules.
--[ ]   Prioritize rule execution.
--[ ]   Add logging for rule evaluation.
--[ ]   Integration tests for multi-rule execution.
+*   Support for multiple rules.
+*   Prioritize rule execution.
+*   Add logging for rule evaluation.
+*   Integration tests for multi-rule execution.
 
 ### Milestone 3: Rule Groups and Conditions
 
--[ ]   Allow grouping of rules.
--[ ]   Add support for complex condition combinations (AND/OR conditions).
--[ ]   Add rule deactivation logic.
--[ ]   Improved test coverage for group-based execution.
+*   Allow grouping of rules.
+*   Add support for complex condition combinations (AND/OR conditions).
+*   Add rule deactivation logic.
+*   Improved test coverage for group-based execution.
 
 ### Milestone 4: Performance Optimization and Rule Persistence
 
--[ ]   Optimize rule execution for large datasets.
--[ ]   Support for storing and loading rules from a database.
--[ ]   Provide example integrations for popular databases (e.g., MongoDB, PostgreSQL).
--[ ]   Document performance benchmarks.
+*   Optimize rule execution for large datasets.
+*   Support for storing and loading rules from a database.
+*   Provide example integrations for popular databases (e.g., MongoDB, PostgreSQL).
+*   Document performance benchmarks.
 
 ## Contributing
 

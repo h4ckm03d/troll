@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  biome-check:
+    name: Run Biome Lint & Format
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js (choose the version your project requires)
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16' # or whichever version your project requires
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: Run Biome Linter & Formatter check
+      - name: Run Biome
+        run: npx biome check .
+
+      # Optional: Fail the job if the code is not formatted correctly
+      - name: Verify Formatting
+        run: npx biome check . --apply
+        continue-on-error: true
+
+      # Step 5: Ensure all files are formatted correctly
+      - name: Check if formatting is correct
+        run: git diff --exit-code

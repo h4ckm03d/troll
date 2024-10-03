@@ -1,23 +1,22 @@
 {
-  "name": "troll",
-  "version": "1.0.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsc",
-    "test": "jest"
-  },
-  "keywords": [
-    "rule-engine",
-    "composable",
-    "typescript"
-  ],
-  "author": "Moch Lutfi",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/jest": "^29.5.13",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.2.5",
-    "typescript": "^4.0.0"
-  }
+	"name": "troll",
+	"version": "1.0.0",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "tsc",
+		"test": "jest",
+		"lint": "biome check ."
+	},
+	"keywords": ["rule-engine", "composable", "typescript"],
+	"author": "Moch Lutfi",
+	"license": "Apache License",
+	"devDependencies": {
+		"@types/jest": "^29.5.13",
+		"jest": "^29.7.0",
+		"lefthook": "^1.7.18",
+		"ts-jest": "^29.2.5",
+		"typescript": "^4.0.0",
+		"biome": "^0.3.3"
+	}
 }

@@ -1,11 +1,7 @@
 // Rule interface definitions
-export interface StatelessRule<T> {
-  (context: T): boolean;
-}
+export type StatelessRule<T> = (context: T) => boolean;
 
-export interface StatefulRule<T> {
-  (context: T): Promise<boolean>;
-}
+export type StatefulRule<T> = (context: T) => Promise<boolean>;
 
 export type Rule<T> = StatelessRule<T> | StatefulRule<T>;
 
@@ -17,11 +13,8 @@ const isStatelessRule = <T>(rule: Rule<T>): rule is StatelessRule<T> => {
 // Combinator to check all rules
 export const all = <T>(...rules: Rule<T>[]): StatefulRule<T> => async (context: T) => {
   for (const rule of rules) {
-    if (isStatelessRule(rule)) {
-      if (!rule(context)) return false;
-    } else {
-      if (!(await rule(context))) return false;
-    }
+    const result = isStatelessRule(rule) ? rule(context) : await rule(context);
+    if (!result) return false;
   }
   return true;
 };
@@ -29,11 +22,8 @@ export const all = <T>(...rules: Rule<T>[]): StatefulRule<T> => async (context: 
 // Combinator to check if any rule is true
 export const any = <T>(...rules: Rule<T>[]): StatefulRule<T> => async (context: T) => {
   for (const rule of rules) {
-    if (isStatelessRule(rule)) {
-      if (rule(context)) return true;
-    } else {
-      if (await rule(context)) return true;
-    }
+    const result = isStatelessRule(rule) ? rule(context) : await rule(context);
+    if (result) return true;
   }
   return false;
 };

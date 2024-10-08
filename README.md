@@ -95,9 +95,14 @@ export const includeSkuRule = (includeSkuList: string[]): StatelessRule<LoyaltyC
   context.orderData.items.some(item => includeSkuList.includes(item.itemCode));
 
 // Initialize Rule Engine
-const engine = new RuleEngine<LoyaltyContext>([
-  { rule: includeSkuRule(['sku1']), action: applyDiscountAction },
-]);
+const engine = new RuleEngine(
+  new Map([
+    [
+      "loyalty",
+      [{ rule: includeSkuRule(["sku1"]), action: mockSendNotification }],
+    ],
+  ])
+);
 
 // Define the context
 const context = {

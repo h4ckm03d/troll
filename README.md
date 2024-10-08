@@ -173,7 +173,3 @@ Contributions are welcome! To contribute:
 ## License
 
 This project is licensed under the Apache License. See the [LICENSE](./LICENSE) file for more details.
-
----
-
-This revised README now includes a **warning** to inform users that the project is in an early stage of development and the API may change frequently.

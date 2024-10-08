@@ -1,11 +1,5 @@
 # TROLL
 
-⚠️ **Warning**: This project is under **active and heavy development**. The API is subject to change as new features are added and improvements are made. It is recommended to use specific versions in production environments until a stable release is available.
-
----
-
-## TROLL
-
 Welcome to the **TROLL Rule Engine**, a powerful and flexible library for defining and managing business rules in TypeScript. This rule engine allows you to dynamically create, evaluate, and apply business rules to various contexts such as promotions, customer actions, or workflows.
 
 ## Table of Contents

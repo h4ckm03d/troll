@@ -1,11 +1,2 @@
-// Import rules and combinators
-import {
-	Rule,
-	StatefulRule,
-	StatelessRule,
-	all,
-	any,
-	not,
-} from "./rules/loyalty";
-
-export { StatelessRule, StatefulRule, Rule, all, any, not };
+export * from './engine';      // Expose the Rule Engine and its types
+export * from './rules';       // Expose all the rule sets

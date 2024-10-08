@@ -1,79 +1,94 @@
+# TROLL
+
+⚠️ **Warning**: This project is under **active and heavy development**. The API is subject to change as new features are added and improvements are made. It is recommended to use specific versions in production environments until a stable release is available.
+
+---
+
 ## TROLL
 
-Welcome to the **Rule Engine** project! This repository contains the implementation of a customizable rule engine written in TypeScript, allowing you to define, evaluate, and manage business rules efficiently.
+Welcome to the **TROLL Rule Engine**, a powerful and flexible library for defining and managing business rules in TypeScript. This rule engine allows you to dynamically create, evaluate, and apply business rules to various contexts such as promotions, customer actions, or workflows.
 
 ## Table of Contents
 
-*   [Introduction](#introduction)
-*   [Features](#features)
-*   [Tech Stack](#tech-stack)
-*   [Installation](#installation)
-*   [Usage](#usage)
-*   [Milestones](#milestones)
-*   [Contributing](#contributing)
-*   [License](#license)
+- [Introduction](#introduction)
+- [Warning](#warning)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Milestones](#milestones)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Warning
+
+⚠️ **Important**: This project is under **heavy development** and the API is subject to frequent changes. Until we release a stable version, breaking changes may occur. For production environments, consider using specific tagged versions to avoid unexpected changes.
 
 ## Introduction
 
-The **Rule Engine** is a flexible and efficient system for defining and applying business rules to various data and events. Whether for promotions, customer actions, or custom workflows, this engine helps create dynamic rule-based scenarios that can be extended and modified without changing the underlying code.
+The **TROLL Rule Engine** is a lightweight and customizable TypeScript-based engine designed to evaluate rules based on conditions and trigger actions accordingly. It is built to handle complex rule scenarios in a scalable and maintainable way, making it ideal for applications that require flexible business logic.
 
 ## Features
 
-*   **Rule Definitions**: Define rules based on conditions, actions, and priorities.
-*   **Condition Evaluation**: Evaluate simple or complex conditions on data.
-*   **Action Execution**: Trigger predefined actions when rules are met.
-*   **Custom Rules**: Easily extendable to add custom rule types.
-*   **Priority-Based Execution**: Prioritize rules for specific order of execution.
-*   **TypeScript Support**: Strongly typed for better code reliability and auto-completion.
+- **Dynamic Rule Definition**: Easily define and modify rules without changing core code.
+- **Condition-Based Evaluation**: Apply rules based on simple or complex conditions.
+- **Action Triggering**: Execute specific actions when rule conditions are met.
+- **Extensibility**: Add custom rules, conditions, and actions.
+- **Priority-Based Execution**: Order rule execution by priority.
+- **Strong TypeScript Support**: Type-safe implementation for better development experience.
 
 ## Tech Stack
 
-*   **TypeScript**: Strongly typed JavaScript for scalable codebases.
-*   **Node.js**: JavaScript runtime for executing the rule engine.
-*   **Jest**: Testing framework for unit and integration tests.
+- **TypeScript**: Type-safe language for scalable and maintainable code.
+- **Node.js**: Runtime for executing the rule engine.
+- **Jest**: Unit testing framework to ensure reliable functionality.
 
 ## Installation
 
-To get started with the rule engine, follow these steps:
+To start using the **TROLL** rule engine, follow these steps:
 
-1.  Clone the repository:
-    
-    ```
-    git clone https://github.com/h4ckm03d/troll.git
-    ```
-    
-2.  Install dependencies:
-    
-    ```
-    cd troll
-    npm install
-    ```
-    
-3.  Run tests:
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/h4ckm03d/troll.git
    ```
+
+2. Navigate into the project directory:
+
+   ```bash
+   cd troll
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+4. Run the tests:
+
+   ```bash
    npm run test
    ```
-
-    
 
 ## Usage
 
 ### Defining a Rule
 
-You can define a rule by specifying its conditions and actions. Here's a basic example:
+Here’s a basic example of how to define a rule that applies a discount based on certain conditions:
 
-```
-import { RuleEngine } from './RuleEngine';
+```ts
+import { RuleEngine, StatelessRule, Action, LoyaltyContext } from 'troll'; 
 
-// Action to apply discount
+// Define action to apply a discount
 const applyDiscountAction: Action<LoyaltyContext> = (context) => {
   const newItems = context.orderData.items.map(item => ({
-    ...item, // Create a new item object
-    discount: 10  // Apply a 10% discount
+    ...item, 
+    discount: 0.1  // Apply a 10% discount
   }));
 
   return {
-    ...context, // Create a new context
+    ...context,
     orderData: {
       ...context.orderData,
       items: newItems
@@ -81,10 +96,11 @@ const applyDiscountAction: Action<LoyaltyContext> = (context) => {
   };
 };
 
-// define rules
+// Define condition to check SKU
 export const includeSkuRule = (includeSkuList: string[]): StatelessRule<LoyaltyContext> => (context) =>
   context.orderData.items.some(item => includeSkuList.includes(item.itemCode));
 
+// Initialize Rule Engine
 const engine = new RuleEngine<LoyaltyContext>([
   { rule: includeSkuRule(['sku1']), action: applyDiscountAction },
 ]);
@@ -93,75 +109,71 @@ const engine = new RuleEngine<LoyaltyContext>([
 const context = {
   customerId: 'customer1',
   eventName: 'Loyalty Program',
-  eventType: 'Discount',
   orderData: {
     items: [
-      { itemCode: 'sku1', quantity: 2, discount: 0, price: 50 },  // Total: $100
-      { itemCode: 'sku4', quantity: 1, discount: 0, price: 30 }   // Not included in SKUs
+      { itemCode: 'sku1', quantity: 2, discount: 0, price: 50 },
+      { itemCode: 'sku4', quantity: 1, discount: 0, price: 30 }
     ],
     transactionDate: new Date(),
-    paymentMethod: 'credit-card'
   }
-}
+};
 
-const updatedContext = await engine.run(loyaltyContext);
-
-console.log(updatedContext.orderData.items[0].discount); // 0.1 (10% discount applied)
-
+const updatedContext = await engine.run(context);
+console.log(updatedContext.orderData.items[0].discount);  // 0.1 (10% discount applied)
 ```
 
 ### Adding New Rules
 
-To add new rules, you simply append new objects to the rules array with custom logic for conditions and actions.
+To add new rules, simply extend the rules array in the `RuleEngine` instance and define the new conditions and actions.
 
 ### Custom Rule Types
 
-You can create new types of rules by extending the `Rule` interface or adding more complex condition evaluation functions.
+You can create new rule types by extending the `Rule` interface or adding more complex condition evaluation functions.
 
 ## Milestones
 
-Here are the key milestones and features planned for this project:
-
 ### Milestone 1: Core Rule Engine
 
--[x]   Setup TypeScript environment.
--[x]   Basic rule definition structure with conditions and actions.
-*   Execute rules based on conditions.
-*   Unit tests for core functionality.
+- [x] Setup TypeScript environment.
+- [x] Define the structure for conditions and actions.
+- [x] Implement the core rule evaluation logic.
+- [x] Unit tests for core functionality.
 
-### Milestone 2: Priority and Multiple Rule Evaluation
+### Milestone 2: Multiple Rules and Prioritization
 
-*   Support for multiple rules.
-*   Prioritize rule execution.
-*   Add logging for rule evaluation.
-*   Integration tests for multi-rule execution.
+- [x] Support multiple rule definitions.
+- [x] Prioritize rule execution.
+- [x] Logging for rule evaluation.
+- [ ] Integration tests for multi-rule scenarios.
 
-### Milestone 3: Rule Groups and Conditions
+### Milestone 3: Rule Groups and Complex Conditions
 
-*   Allow grouping of rules.
-*   Add support for complex condition combinations (AND/OR conditions).
-*   Add rule deactivation logic.
-*   Improved test coverage for group-based execution.
+- [ ] Support for grouping of rules.
+- [ ] Add condition combinations (AND/OR logic).
+- [ ] Rule deactivation logic.
+- [ ] Test coverage for group-based rule execution.
 
-### Milestone 4: Performance Optimization and Rule Persistence
+### Milestone 4: Optimization and Persistence
 
-*   Optimize rule execution for large datasets.
-*   Support for storing and loading rules from a database.
-*   Provide example integrations for popular databases (e.g., MongoDB, PostgreSQL).
-*   Document performance benchmarks.
+- [ ] Performance optimization for large rule sets.
+- [ ] Support for storing and retrieving rules from databases (e.g., MongoDB, PostgreSQL).
+- [ ] Provide example integrations with common databases.
+- [ ] Performance benchmarking documentation.
 
 ## Contributing
 
-We welcome contributions!
+Contributions are welcome! To contribute:
 
-### Steps to Contribute:
-
-1.  Fork the repository.
-2.  Create a new branch (`git checkout -b feature-branch`).
-3.  Make your changes and commit them (`git commit -m 'Add new feature'`).
-4.  Push to the branch (`git push origin feature-branch`).
-5.  Create a pull request.
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature-branch`).
+3. Make your changes and commit (`git commit -m 'Add new feature'`).
+4. Push to your branch (`git push origin feature-branch`).
+5. Create a pull request.
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for more information.
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for more details.
+
+---
+
+This revised README now includes a **warning** to inform users that the project is in an early stage of development and the API may change frequently.

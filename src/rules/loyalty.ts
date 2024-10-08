@@ -1,9 +1,6 @@
 import {
-	Action,
-	RuleEngine,
 	type StatefulRule,
 	type StatelessRule,
-	all,
 } from "../engine";
 
 // Define the Loyalty Context structure
